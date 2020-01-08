@@ -344,3 +344,4 @@ playground.xcworkspace
 **/flutter_export_environment.sh
 
 .dart_tool/
+coverage/
