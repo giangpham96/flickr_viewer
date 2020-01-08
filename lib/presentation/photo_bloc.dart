@@ -5,6 +5,7 @@ import 'package:flickr_viewer/domain/get_photos_by_keyword_use_case.dart';
 import 'package:flickr_viewer/presentation/base/bloc.dart';
 import 'package:flickr_viewer/presentation/photo_view_state.dart';
 import 'package:rxdart/rxdart.dart';
+import '../common/stream_extensions.dart';
 
 class _ResultWithKeyword {
   final String keyword;
@@ -27,7 +28,6 @@ class _CurrentStoredSearch {
 }
 
 class PhotoBloc extends BaseBloc {
-
   Stream<PhotoViewState> get photoState => _photoController.stream;
 
   final _photoController = StreamController<PhotoViewState>();
@@ -43,7 +43,7 @@ class PhotoBloc extends BaseBloc {
   final GetPhotosByKeywordUseCase _getPhotosByKeywordUseCase;
 
   PhotoBloc(this._getPhotosByKeywordUseCase) {
-    _photoController.add(Idling());
+    _photoController.addIfNotClosed(Idling());
     _keywordChangeNotifier
         .distinct()
         .switchMap((k) => _cancelLoadingNextPageIfNecessary().map((_) => k))
@@ -54,12 +54,12 @@ class PhotoBloc extends BaseBloc {
   resetSearch() {
     _currentStoredPhotos = null;
     _cancelLoadingNextPageIfNecessary()
-        .listen((_) => _photoController.add(Idling()));
+        .listen((_) => _photoController.addIfNotClosed(Idling()));
   }
 
   onKeywordChanged(String keyword) {
     _currentStoredPhotos = null;
-    _keywordChangeNotifier.add(keyword);
+    _keywordChangeNotifier.addIfNotClosed(keyword);
   }
 
   onRetryQuery(String keyword) {
@@ -99,14 +99,14 @@ class PhotoBloc extends BaseBloc {
     final keyword = resultWithKeyword.keyword;
     if (result is Loading) {
       _ableToLoadNextPage = false;
-      _photoController.add(Searching());
+      _photoController.addIfNotClosed(Searching());
     } else if (result is Failure) {
       _ableToLoadNextPage = false;
-      _photoController.add(SearchFailed(keyword));
+      _photoController.addIfNotClosed(SearchFailed(keyword));
     } else if (result is Success) {
       if (result.pageOfPhotos.photos.length == 0) {
         _ableToLoadNextPage = false;
-        _photoController.add(NotFound(keyword));
+        _photoController.addIfNotClosed(NotFound(keyword));
       } else {
         _ableToLoadNextPage = true;
         _currentStoredPhotos = _CurrentStoredSearch(
@@ -115,7 +115,7 @@ class PhotoBloc extends BaseBloc {
           1,
           result.pageOfPhotos.totalPages,
         );
-        _photoController.add(
+        _photoController.addIfNotClosed(
           PhotosFetched(
             keyword,
             result.pageOfPhotos.photos,
@@ -130,10 +130,11 @@ class PhotoBloc extends BaseBloc {
   _mapResultToLoadNextPageState(GetPhotosByKeywordResult r) {
     if (r is Loading) {
       _ableToLoadNextPage = false;
-      _photoController.add(LoadingNextPage(_currentStoredPhotos.loadedPhotos));
+      _photoController
+          .addIfNotClosed(LoadingNextPage(_currentStoredPhotos.loadedPhotos));
     } else if (r is Failure) {
       _ableToLoadNextPage = true;
-      _photoController.add(
+      _photoController.addIfNotClosed(
         LoadPageFailed(
           _currentStoredPhotos.keyword,
           _currentStoredPhotos.loadedPhotos,
@@ -147,7 +148,7 @@ class PhotoBloc extends BaseBloc {
         r.pageOfPhotos.totalPages,
       );
       _ableToLoadNextPage = true;
-      _photoController.add(
+      _photoController.addIfNotClosed(
         PhotosFetched(
           _currentStoredPhotos.keyword,
           _currentStoredPhotos.loadedPhotos,
