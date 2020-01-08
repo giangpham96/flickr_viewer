@@ -6,7 +6,10 @@ class Photo {
   final String server;
   final String title;
 
-  Photo(this.farm, this.id, this.owner, this.secret, this.server, this.title);
+  Photo(this.farm, this.id, this.owner, this.secret, this.server, this.title)
+      : thumbnail = "https://farm$farm.staticflickr.com/$server/${id}_${secret}_m.jpg";
+
+  final String thumbnail;
 
   @override
   bool operator ==(Object other) =>
