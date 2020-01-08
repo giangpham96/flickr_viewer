@@ -2,6 +2,7 @@ import 'package:flickr_viewer/common/model/photo.dart';
 import 'package:flickr_viewer/presentation/photo_bloc.dart';
 import 'package:flickr_viewer/presentation/photo_view_state.dart';
 import 'package:flickr_viewer/ui/base/base_stateful_widget.dart';
+import 'package:flickr_viewer/ui/search/widgets/paginated_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:transparent_image/transparent_image.dart';
@@ -22,15 +23,56 @@ class _SearchResultState
 
   @override
   Widget render(BuildContext context, PhotoViewState viewState) {
+    _hideSnackBar();
     if (viewState is Idling) {
       return Container();
     }
     if (viewState is PhotosFetched) {
-      return GridView.count(
-        childAspectRatio: 3 / 4,
-        crossAxisCount: 2,
-        children: _renderPhotoList(viewState.photos),
+      return _renderPhotoList(viewState.photos);
+    }
+    if (viewState is SearchFailed) {
+      return _renderSnackBar(
+        'An error has occured',
+        action: SnackBarAction(
+          label: 'Retry',
+          onPressed: () => bloc.onRetryQuery(viewState.keyword),
+        ),
       );
+    }
+    if (viewState is LoadingNextPage) {
+      return _renderPhotoList(
+        viewState.photos,
+        footerState: FooterState.loadingFooter(),
+      );
+    }
+    if (viewState is LoadPageFailed) {
+      return _renderPhotoList(
+        viewState.photos,
+        footerState: LoadingFailedFooter(
+          (context) => Theme(
+            data: ThemeData(splashColor: Colors.transparent),
+            child: Container(
+              padding: EdgeInsets.all(15),
+              alignment: Alignment.center,
+              child: FlatButton.icon(
+                  onPressed: bloc.loadNextPage,
+                  icon: const Icon(
+                    Icons.refresh,
+                    color: Colors.grey,
+                  ),
+                  label: const Text(
+                    'An error has occured. Tap to retry',
+                    style: TextStyle(
+                      color: Colors.grey,
+                    ),
+                  )),
+            ),
+          ),
+        ),
+      );
+    }
+    if (viewState is NotFound) {
+      return _renderSnackBar("No image found for \"${viewState.keyword}\"");
     }
     return Center(
       child: CircularProgressIndicator(),
@@ -39,9 +81,17 @@ class _SearchResultState
 }
 
 extension RenderPhotoList on _SearchResultState {
-
-  List<Widget> _renderPhotoList(List<Photo> photos) {
-    return photos.map(_mapPhotoToItemView).toList();
+  Widget _renderPhotoList(
+    List<Photo> photos, {
+    FooterState footerState,
+  }) {
+    return PaginatedGridView(
+      itemBuilder: (_, index) => _mapPhotoToItemView(photos[index]),
+      itemCount: photos.length,
+      onNextPage: bloc.loadNextPage,
+      childAspectRatio: 0.75,
+      footerState: footerState,
+    );
   }
 
   Widget _mapPhotoToItemView(Photo photo) {
@@ -87,6 +137,26 @@ extension RenderPhotoList on _SearchResultState {
           ),
         ),
       ],
+    );
+  }
+}
+
+extension RenderSnackBarAction on _SearchResultState {
+  Widget _renderSnackBar(String content, {SnackBarAction action}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final snackBar = SnackBar(
+        duration: Duration(seconds: 6),
+        content: Text(content),
+        action: action,
+      );
+      Scaffold.of(context).showSnackBar(snackBar);
+    });
+    return Container();
+  }
+
+  _hideSnackBar() {
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => Scaffold.of(context).hideCurrentSnackBar(),
     );
   }
 }
