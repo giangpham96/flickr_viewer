@@ -8,7 +8,7 @@ import 'package:flickr_viewer/ui/search/search_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   appModule(await SecretLoader('assets/secret.json').load());
   remoteModule();
