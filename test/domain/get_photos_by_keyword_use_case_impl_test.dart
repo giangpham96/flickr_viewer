@@ -5,6 +5,7 @@ import 'package:flickr_viewer/domain/repositories/photo_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:rxdart/rxdart.dart';
+import '../test_util.dart';
 
 class MockedPhotoRepository extends Mock implements PhotoRepository {}
 
@@ -14,8 +15,7 @@ main() {
 
   test('should start with Loading', () async {
     when(repository.getPhotos('batman', 1)).thenAnswer((_) => NeverStream());
-    await expectLater(
-      getPhotosByKeywordUseCase.getPhotos('batman', 1),
+    await getPhotosByKeywordUseCase.getPhotos('batman', 1).expect(
       emits(isA<Loading>()),
     );
   });
@@ -33,8 +33,7 @@ main() {
     );
     when(repository.getPhotos('batman', 1))
         .thenAnswer((_) => Stream.value(testData));
-    await expectLater(
-      getPhotosByKeywordUseCase.getPhotos('batman', 1),
+    await getPhotosByKeywordUseCase.getPhotos('batman', 1).expect(
       emitsInOrder([
         isA<Loading>(),
         isA<Success>()
@@ -46,8 +45,7 @@ main() {
   test('should start with Loading and move to Failure', () async {
     when(repository.getPhotos('batman', 1))
         .thenAnswer((_) => Stream.error(Exception()));
-    await expectLater(
-      getPhotosByKeywordUseCase.getPhotos('batman', 1),
+    await getPhotosByKeywordUseCase.getPhotos('batman', 1).expect(
       emitsInOrder([
         isA<Loading>(),
         isA<Failure>()

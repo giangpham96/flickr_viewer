@@ -8,6 +8,7 @@ import 'package:flickr_viewer/remote/photo_remote_data_source_impl.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:mock_web_server/mock_web_server.dart';
+import '../test_util.dart';
 
 main() {
   MockWebServer _mockWebServer;
@@ -67,8 +68,7 @@ main() {
         ''';
       _mockWebServer.enqueue(httpCode: 200, body: result, headers: _headers);
 
-      await expectLater(
-        _datasource.getPhotos('batman', 1),
+      await _datasource.getPhotos('batman', 1).expect(
         emits(
           PageOfPhotos(
             1,
@@ -80,7 +80,7 @@ main() {
                   "Animal sculptures, 01.07.2019."),
             ],
           ),
-        ),
+        )
       );
 
       final req = _mockWebServer.takeRequest();
@@ -129,10 +129,8 @@ main() {
         ''';
       _mockWebServer.enqueue(httpCode: 200, body: result, headers: _headers);
 
-      await expectLater(
-        _datasource.getPhotos('batman', 1),
-        emitsError(isA<MissingRequiredKeysException>()),
-      );
+      await _datasource.getPhotos('batman', 1)
+          .expect(emitsError(isA<MissingRequiredKeysException>()));
 
       final req = _mockWebServer.takeRequest();
 
@@ -154,9 +152,8 @@ main() {
         ''';
       _mockWebServer.enqueue(httpCode: 200, body: result, headers: _headers);
 
-      await expectLater(
-        _datasource.getPhotos('batman', 1),
-        emitsError(isA<FlickrErrorResponseRemoteModel>()),
+      await _datasource.getPhotos('batman', 1).expect(
+          emitsError(isA<FlickrErrorResponseRemoteModel>()),
       );
 
       final req = _mockWebServer.takeRequest();

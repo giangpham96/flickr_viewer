@@ -4,6 +4,7 @@ import 'package:flickr_viewer/data/photo_repository_impl.dart';
 import 'package:flickr_viewer/data/sources/photo_data_sources.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import '../test_util.dart';
 
 class _MockedPhotoRemoteDataSource extends Mock implements PhotoRemoteDataSource {}
 
@@ -25,20 +26,18 @@ main () {
     when(dataSource.getPhotos('batman', 1))
         .thenAnswer((_) => Stream.value(testData));
 
-    await expectLater(
-        repository.getPhotos('batman', 1),
-        emits(testData),
+    await repository.getPhotos('batman', 1).expect(
+      emits(testData),
     );
 
     verify(dataSource.getPhotos('batman', 1));
   });
-  
+
   test('should propagate error from remote layer', () async {
     when(dataSource.getPhotos('batman', 1))
         .thenAnswer((_) => Stream.error(Exception()));
 
-    await expectLater(
-        repository.getPhotos('batman', 1),
+    await repository.getPhotos('batman', 1).expect(
         emitsError(isA<Exception>()),
     );
 
