@@ -8,7 +8,6 @@ abstract class BaseBlocAwareState<S extends BaseBlocAwareWidget,
     B extends BaseBloc, VS> extends State<S> {
   @override
   Widget build(BuildContext context) {
-    B bloc = BlocProvider.of<B>(context);
     return StreamBuilder(
       stream: getStream(bloc),
       builder: (context, snapshot) => render(context, snapshot.data),
@@ -16,6 +15,8 @@ abstract class BaseBlocAwareState<S extends BaseBlocAwareWidget,
   }
 
   Stream<VS> getStream(B bloc);
+
+  B get bloc => BlocProvider.of<B>(context);
 
   Widget render(BuildContext context, VS viewState);
 }
