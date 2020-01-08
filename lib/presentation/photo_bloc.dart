@@ -97,13 +97,13 @@ class PhotoBloc extends BaseBloc {
   _mapResultWithKeywordToSearchState(_ResultWithKeyword resultWithKeyword) {
     final result = resultWithKeyword.result;
     final keyword = resultWithKeyword.keyword;
-    if (result is Loading) {
+    if (result is LoadingPhotos) {
       _ableToLoadNextPage = false;
       _photoController.addIfNotClosed(Searching());
-    } else if (result is Failure) {
+    } else if (result is FailureLoadingPhotos) {
       _ableToLoadNextPage = false;
       _photoController.addIfNotClosed(SearchFailed(keyword));
-    } else if (result is Success) {
+    } else if (result is PhotosLoaded) {
       if (result.pageOfPhotos.photos.length == 0) {
         _ableToLoadNextPage = false;
         _photoController.addIfNotClosed(NotFound(keyword));
@@ -128,11 +128,11 @@ class PhotoBloc extends BaseBloc {
   }
 
   _mapResultToLoadNextPageState(GetPhotosByKeywordResult r) {
-    if (r is Loading) {
+    if (r is LoadingPhotos) {
       _ableToLoadNextPage = false;
       _photoController
           .addIfNotClosed(LoadingNextPage(_currentStoredPhotos.loadedPhotos));
-    } else if (r is Failure) {
+    } else if (r is FailureLoadingPhotos) {
       _ableToLoadNextPage = true;
       _photoController.addIfNotClosed(
         LoadPageFailed(
@@ -140,7 +140,7 @@ class PhotoBloc extends BaseBloc {
           _currentStoredPhotos.loadedPhotos,
         ),
       );
-    } else if (r is Success) {
+    } else if (r is PhotosLoaded) {
       _currentStoredPhotos = _CurrentStoredSearch(
         _currentStoredPhotos.keyword,
         _currentStoredPhotos.loadedPhotos + r.pageOfPhotos.photos,

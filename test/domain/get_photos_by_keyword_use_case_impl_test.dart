@@ -17,7 +17,7 @@ main() {
     when(repository.getPhotos('batman', 1)).thenAnswer((_) => NeverStream());
     await getPhotosByKeywordUseCase
         .getPhotos('batman', 1)
-        .expect(emits(isA<Loading>()));
+        .expect(emits(isA<LoadingPhotos>()));
   });
 
   test('should start with Loading and move to Success', () async {
@@ -35,8 +35,8 @@ main() {
         .thenAnswer((_) => Stream.value(testData));
     await getPhotosByKeywordUseCase.getPhotos('batman', 1).expect(
           emitsInOrder([
-            isA<Loading>(),
-            isA<Success>()
+            isA<LoadingPhotos>(),
+            isA<PhotosLoaded>()
                 .having((s) => s.pageOfPhotos, 'match test data', testData)
           ]),
         );
@@ -47,8 +47,8 @@ main() {
         .thenAnswer((_) => Stream.error(Exception()));
     await getPhotosByKeywordUseCase.getPhotos('batman', 1).expect(
           emitsInOrder([
-            isA<Loading>(),
-            isA<Failure>()
+            isA<LoadingPhotos>(),
+            isA<FailureLoadingPhotos>()
                 .having((f) => f.error, 'match test data', isA<Exception>())
           ]),
         );

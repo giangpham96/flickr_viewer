@@ -37,7 +37,7 @@ main() {
       'should move to Searching state and disallow loading next page',
       () async {
         when(usecase.getPhotos('batman', 1))
-            .thenAnswer((_) => Stream.value(Loading()));
+            .thenAnswer((_) => Stream.value(LoadingPhotos()));
         photoBloc.onKeywordChanged('batman');
         await photoBloc.photoState.expect(emitsInOrder([Idling(), Searching()]));
         photoBloc.loadNextPage();
@@ -52,8 +52,8 @@ main() {
         when(usecase.getPhotos('batman', 1)).thenAnswer(
           (_) => Stream.fromIterable(
             [
-              Loading(),
-              Success(
+              LoadingPhotos(),
+              PhotosLoaded(
                 PageOfPhotos(
                   1,
                   2,
@@ -64,7 +64,7 @@ main() {
           ),
         );
         when(usecase.getPhotos('batman', 2))
-            .thenAnswer((_) => Stream.value(Loading()));
+            .thenAnswer((_) => Stream.value(LoadingPhotos()));
         photoBloc.onKeywordChanged('batman');
 
         final broadcastState = photoBloc.photoState.asBroadcastStream();
@@ -98,8 +98,8 @@ main() {
         when(usecase.getPhotos('batman', 1)).thenAnswer(
           (_) => Stream.fromIterable(
             [
-              Loading(),
-              Success(
+              LoadingPhotos(),
+              PhotosLoaded(
                 PageOfPhotos(
                   1,
                   2,
@@ -135,8 +135,8 @@ main() {
         when(usecase.getPhotos('batman', 1)).thenAnswer(
           (_) => Stream.fromIterable(
             [
-              Loading(),
-              Success(
+              LoadingPhotos(),
+              PhotosLoaded(
                 PageOfPhotos(1, 1, []),
               ),
             ],
@@ -167,8 +167,8 @@ main() {
         when(usecase.getPhotos('batman', 1)).thenAnswer(
           (_) => Stream.fromIterable(
             [
-              Loading(),
-              Success(
+              LoadingPhotos(),
+              PhotosLoaded(
                 PageOfPhotos(
                   1,
                   1, //only has 1 page and it is reached
@@ -204,8 +204,8 @@ main() {
         when(usecase.getPhotos('batman', 1)).thenAnswer(
           (_) => Stream.fromIterable(
             [
-              Loading(),
-              Failure(Exception()),
+              LoadingPhotos(),
+              FailureLoadingPhotos(Exception()),
             ],
           ),
         );
@@ -233,8 +233,8 @@ main() {
         when(usecase.getPhotos('batman', 1)).thenAnswer(
           (_) => Stream.fromIterable(
             [
-              Loading(),
-              Failure(Exception()),
+              LoadingPhotos(),
+              FailureLoadingPhotos(Exception()),
             ],
           ),
         );
@@ -253,8 +253,8 @@ main() {
         when(usecase.getPhotos('batman', 1)).thenAnswer(
           (_) => Stream.fromIterable(
             [
-              Loading(),
-              Success(
+              LoadingPhotos(),
+              PhotosLoaded(
                 PageOfPhotos(
                   1,
                   1, //only has 1 page and it is reached
@@ -284,8 +284,8 @@ main() {
         when(usecase.getPhotos('batman', 1)).thenAnswer(
           (_) => Stream.fromIterable(
             [
-              Loading(),
-              Success(
+              LoadingPhotos(),
+              PhotosLoaded(
                 PageOfPhotos(
                   1,
                   3,
@@ -297,8 +297,8 @@ main() {
         );
         when(usecase.getPhotos('batman', 2)).thenAnswer(
           (_) => Stream.fromIterable([
-            Loading(),
-            Success(
+            LoadingPhotos(),
+            PhotosLoaded(
               PageOfPhotos(
                 2,
                 3,
@@ -308,7 +308,7 @@ main() {
           ]),
         );
         when(usecase.getPhotos('batman', 3))
-            .thenAnswer((_) => Stream.value(Loading()));
+            .thenAnswer((_) => Stream.value(LoadingPhotos()));
         photoBloc.onKeywordChanged('batman');
 
         final broadcastState = photoBloc.photoState.asBroadcastStream();
@@ -366,8 +366,8 @@ main() {
         when(usecase.getPhotos('batman', 1)).thenAnswer(
           (_) => Stream.fromIterable(
             [
-              Loading(),
-              Success(
+              LoadingPhotos(),
+              PhotosLoaded(
                 PageOfPhotos(
                   1,
                   3,
@@ -379,8 +379,8 @@ main() {
         );
         when(usecase.getPhotos('batman', 2)).thenAnswer(
           (_) => Stream.fromIterable([
-            Loading(),
-            Failure(Exception()),
+            LoadingPhotos(),
+            FailureLoadingPhotos(Exception()),
           ]),
         );
 
@@ -418,7 +418,7 @@ main() {
         );
 
         when(usecase.getPhotos('batman', 2))
-            .thenAnswer((_) => Stream.value(Loading()));
+            .thenAnswer((_) => Stream.value(LoadingPhotos()));
 
         photoBloc.loadNextPage();
 

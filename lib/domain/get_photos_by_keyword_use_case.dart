@@ -8,18 +8,18 @@ abstract class GetPhotosByKeywordUseCase {
 
 abstract class GetPhotosByKeywordResult {}
 
-class Loading extends GetPhotosByKeywordResult {}
+class LoadingPhotos extends GetPhotosByKeywordResult {}
 
-class Failure extends GetPhotosByKeywordResult {
+class FailureLoadingPhotos extends GetPhotosByKeywordResult {
   final Exception error;
 
-  Failure(this.error);
+  FailureLoadingPhotos(this.error);
 }
 
-class Success extends GetPhotosByKeywordResult {
+class PhotosLoaded extends GetPhotosByKeywordResult {
   final PageOfPhotos pageOfPhotos;
 
-  Success(this.pageOfPhotos);
+  PhotosLoaded(this.pageOfPhotos);
 }
 
 class GetPhotosByKeywordUseCaseImpl implements GetPhotosByKeywordUseCase {
@@ -31,8 +31,8 @@ class GetPhotosByKeywordUseCaseImpl implements GetPhotosByKeywordUseCase {
   Stream<GetPhotosByKeywordResult> getPhotos(String keyword, int page) {
     return _photoRepository
         .getPhotos(keyword, page)
-        .map<GetPhotosByKeywordResult>((p) => Success(p))
-        .onErrorResume((e) => Stream.value(Failure(e)))
-        .startWith(Loading());
+        .map<GetPhotosByKeywordResult>((p) => PhotosLoaded(p))
+        .onErrorResume((e) => Stream.value(FailureLoadingPhotos(e)))
+        .startWith(LoadingPhotos());
   }
 }
