@@ -21,12 +21,8 @@ class SecretLoader {
 
   SecretLoader(this.secretPath);
 
-  Future<SecretProvider> load() {
-    return rootBundle.loadStructuredData(
-      this.secretPath,
-      (jsonStr) async {
-        return _SecretProviderImpl(json.decode(jsonStr));
-      },
-    );
+  Future<SecretProvider> load() async {
+    String content = await rootBundle.loadString(secretPath);
+    return _SecretProviderImpl(json.decode(content));
   }
 }
