@@ -37,8 +37,9 @@ remoteModule() {
   );
   GetIt.instance.registerLazySingleton<Dio>(() {
     final dio = Dio();
-    dio.interceptors.add(GetIt.instance.get(FLICKR_INTERCEPTOR_TAG));
-    dio.interceptors.add(GetIt.instance.get(NETWORK_INTERCEPTOR_TAG));
+    dio.interceptors
+      ..add(GetIt.instance.get(FLICKR_INTERCEPTOR_TAG))
+      ..add(GetIt.instance.get(NETWORK_INTERCEPTOR_TAG));
     dio.options.baseUrl = 'https://www.flickr.com/';
     return dio;
   });
