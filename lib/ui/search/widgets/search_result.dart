@@ -28,9 +28,12 @@ class _SearchResultState
       return Container();
     }
     if (viewState is PhotosFetched) {
+      if (viewState.hideKeyboard)
+        FocusScope.of(context).requestFocus(FocusNode());
       return _renderPhotoList(viewState.photos);
     }
     if (viewState is SearchFailed) {
+      FocusScope.of(context).requestFocus(FocusNode());
       return _renderSnackBar(
         'An error has occured',
         action: SnackBarAction(
@@ -72,6 +75,7 @@ class _SearchResultState
       );
     }
     if (viewState is NotFound) {
+      FocusScope.of(context).requestFocus(FocusNode());
       return _renderSnackBar("No image found for \"${viewState.keyword}\"");
     }
     return Center(

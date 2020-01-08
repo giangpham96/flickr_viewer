@@ -7,7 +7,8 @@ class Idling extends PhotoViewState {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Idling && runtimeType == other.runtimeType;
+          other is Idling &&
+              runtimeType == other.runtimeType;
 
   @override
   int get hashCode => 0;
@@ -40,21 +41,23 @@ class LoadingNextPage extends PhotoViewState {
 }
 
 class PhotosFetched extends PhotoViewState {
+  final bool hideKeyboard;
   final String keyword;
   final List<Photo> photos;
 
-  PhotosFetched(this.keyword, this.photos);
+  PhotosFetched(this.keyword, this.photos, this.hideKeyboard);
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is PhotosFetched &&
+          hideKeyboard == other.hideKeyboard &&
           runtimeType == other.runtimeType &&
           keyword == other.keyword &&
           listEquals(photos, other.photos);
 
   @override
-  int get hashCode => keyword.hashCode ^ photos.hashCode;
+  int get hashCode => keyword.hashCode ^ photos.hashCode ^ hideKeyboard.hashCode;
 }
 
 class LoadPageFailed extends PhotoViewState {

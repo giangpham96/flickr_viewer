@@ -119,6 +119,7 @@ class PhotoBloc extends BaseBloc {
           PhotosFetched(
             keyword,
             result.pageOfPhotos.photos,
+            true
           ),
         );
       }
@@ -152,6 +153,7 @@ class PhotoBloc extends BaseBloc {
         PhotosFetched(
           _currentStoredPhotos.keyword,
           _currentStoredPhotos.loadedPhotos,
+          false
         ),
       );
     } else {

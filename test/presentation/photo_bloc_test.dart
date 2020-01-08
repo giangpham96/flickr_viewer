@@ -76,6 +76,7 @@ main() {
             PhotosFetched(
               'batman',
               [Photo(1, 'id', 'owner', 'secret', 'server', 'title')],
+              true
             ),
           ],
         ));
@@ -120,6 +121,7 @@ main() {
             PhotosFetched(
               'batman',
               [Photo(1, 'id', 'owner', 'secret', 'server', 'title')],
+              true,
             ),
           ],
         ));
@@ -189,6 +191,7 @@ main() {
             PhotosFetched(
               'batman',
               [Photo(1, 'id', 'owner', 'secret', 'server', 'title')],
+              true,
             ),
           ],
         ));
@@ -272,6 +275,7 @@ main() {
             PhotosFetched(
               'batman',
               [Photo(1, 'id', 'owner', 'secret', 'server', 'title')],
+              true,
             ),
           ],
         ));
@@ -321,6 +325,7 @@ main() {
               PhotosFetched(
                 'batman',
                 [Photo(1, 'id', 'owner', 'secret', 'server', 'title')],
+                true,
               ),
             ],
           ),
@@ -340,6 +345,7 @@ main() {
                   Photo(1, 'id', 'owner', 'secret', 'server', 'title'),
                   Photo(2, 'id', 'owner', 'secret', 'server', 'title')
                 ],
+                false,
               ),
             ],
           ),
@@ -396,6 +402,7 @@ main() {
               PhotosFetched(
                 'batman',
                 [Photo(1, 'id', 'owner', 'secret', 'server', 'title')],
+                true,
               ),
             ],
           ),
