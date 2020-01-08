@@ -345,3 +345,4 @@ playground.xcworkspace
 
 .dart_tool/
 coverage/
+assets/secret.json

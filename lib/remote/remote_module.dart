@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flickr_viewer/common/config/secret_provider.dart';
 import 'package:flickr_viewer/data/sources/photo_data_sources.dart';
 import 'package:flickr_viewer/remote/flickr_interceptor.dart';
 import 'package:flickr_viewer/remote/photo_remote_data_source_impl.dart';
@@ -10,7 +11,9 @@ const FLICKR_INTERCEPTOR_TAG = 'FLICKR_INTERCEPTOR_TAG';
 
 remoteModule() {
   GetIt.instance.registerFactory<Interceptor>(
-    () => FlickrInterceptor('b59eaa142fbb03d0ba6c93882fd62e30'),
+    () => FlickrInterceptor(
+      GetIt.instance.get<SecretProvider>().getFlickrApiKey(),
+    ),
     instanceName: FLICKR_INTERCEPTOR_TAG,
   );
   GetIt.instance.registerLazySingleton<Dio>(() {
