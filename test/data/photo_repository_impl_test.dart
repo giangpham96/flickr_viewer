@@ -6,9 +6,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import '../test_util.dart';
 
-class _MockedPhotoRemoteDataSource extends Mock implements PhotoRemoteDataSource {}
+class _MockedPhotoRemoteDataSource extends Mock
+    implements PhotoRemoteDataSource {}
 
-main () {
+main() {
   final dataSource = _MockedPhotoRemoteDataSource();
   final repository = PhotoRepositoryImpl(dataSource);
 
@@ -27,8 +28,8 @@ main () {
         .thenAnswer((_) => Stream.value(testData));
 
     await repository.getPhotos('batman', 1).expect(
-      emits(testData),
-    );
+          emits(testData),
+        );
 
     verify(dataSource.getPhotos('batman', 1));
   });
@@ -38,8 +39,8 @@ main () {
         .thenAnswer((_) => Stream.error(Exception()));
 
     await repository.getPhotos('batman', 1).expect(
-        emitsError(isA<Exception>()),
-    );
+          emitsError(isA<Exception>()),
+        );
 
     verify(dataSource.getPhotos('batman', 1));
   });

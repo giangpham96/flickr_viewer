@@ -19,15 +19,12 @@ class FlickrErrorResponseRemoteModel implements Exception {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is FlickrErrorResponseRemoteModel &&
-              runtimeType == other.runtimeType &&
-              code == other.code &&
-              message == other.message &&
-              stat == other.stat;
+      other is FlickrErrorResponseRemoteModel &&
+          runtimeType == other.runtimeType &&
+          code == other.code &&
+          message == other.message &&
+          stat == other.stat;
 
   @override
-  int get hashCode =>
-      code.hashCode ^
-      message.hashCode ^
-      stat.hashCode;
+  int get hashCode => code.hashCode ^ message.hashCode ^ stat.hashCode;
 }

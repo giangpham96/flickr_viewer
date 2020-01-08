@@ -11,14 +11,14 @@ class Photo {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is Photo &&
-              runtimeType == other.runtimeType &&
-              farm == other.farm &&
-              id == other.id &&
-              owner == other.owner &&
-              secret == other.secret &&
-              server == other.server &&
-              title == other.title;
+      other is Photo &&
+          runtimeType == other.runtimeType &&
+          farm == other.farm &&
+          id == other.id &&
+          owner == other.owner &&
+          secret == other.secret &&
+          server == other.server &&
+          title == other.title;
 
   @override
   int get hashCode =>

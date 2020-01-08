@@ -14,23 +14,24 @@ class PhotoRemoteDataSourceImpl implements PhotoRemoteDataSource {
 
   @override
   Stream<PageOfPhotos> getPhotos(String keyword, int page) {
-    return Stream.fromFuture(
-      _flickrService.getPhotos(keyword, page),
-    ).map((r) =>
-        PageOfPhotos(
-          r.photos.page,
-          r.photos.pages,
-          r.photos.photo.map(
-                (p) =>
-                Photo(p.farm, p.id, p.owner, p.secret, p.server, p.title),
-          ).toList(),
-        ),
-    ).onErrorResume((dynamic e) =>
-        Stream.error(
-            e is DioError && e.error is FlickrErrorResponseRemoteModel
-                ? e.error
-                : e
-        ),
-    );
+    return Stream.fromFuture(_flickrService.getPhotos(keyword, page))
+        .map(
+          (r) => PageOfPhotos(
+            r.photos.page,
+            r.photos.pages,
+            r.photos.photo
+                .map(
+                  (p) =>
+                      Photo(p.farm, p.id, p.owner, p.secret, p.server, p.title),
+                )
+                .toList(),
+          ),
+        )
+        .onErrorResume(
+          (dynamic e) => Stream.error(
+              e is DioError && e.error is FlickrErrorResponseRemoteModel
+                  ? e.error
+                  : e),
+        );
   }
 }

@@ -15,9 +15,9 @@ main() {
 
   test('should start with Loading', () async {
     when(repository.getPhotos('batman', 1)).thenAnswer((_) => NeverStream());
-    await getPhotosByKeywordUseCase.getPhotos('batman', 1).expect(
-      emits(isA<Loading>()),
-    );
+    await getPhotosByKeywordUseCase
+        .getPhotos('batman', 1)
+        .expect(emits(isA<Loading>()));
   });
 
   test('should start with Loading and move to Success', () async {
@@ -34,23 +34,23 @@ main() {
     when(repository.getPhotos('batman', 1))
         .thenAnswer((_) => Stream.value(testData));
     await getPhotosByKeywordUseCase.getPhotos('batman', 1).expect(
-      emitsInOrder([
-        isA<Loading>(),
-        isA<Success>()
-            .having((s) => s.pageOfPhotos, 'match test data', testData)
-      ]),
-    );
+          emitsInOrder([
+            isA<Loading>(),
+            isA<Success>()
+                .having((s) => s.pageOfPhotos, 'match test data', testData)
+          ]),
+        );
   });
 
   test('should start with Loading and move to Failure', () async {
     when(repository.getPhotos('batman', 1))
         .thenAnswer((_) => Stream.error(Exception()));
     await getPhotosByKeywordUseCase.getPhotos('batman', 1).expect(
-      emitsInOrder([
-        isA<Loading>(),
-        isA<Failure>()
-            .having((f) => f.error, 'match test data', isA<Exception>())
-      ]),
-    );
+          emitsInOrder([
+            isA<Loading>(),
+            isA<Failure>()
+                .having((f) => f.error, 'match test data', isA<Exception>())
+          ]),
+        );
   });
 }

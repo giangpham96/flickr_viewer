@@ -35,7 +35,7 @@ main() {
 
     test(
       'should move to Searching state and disallow loading next page',
-          () async {
+      () async {
         when(usecase.getPhotos('batman', 1))
             .thenAnswer((_) => Stream.value(Loading()));
         photoBloc.onKeywordChanged('batman');
@@ -48,9 +48,9 @@ main() {
 
     test(
       'should move to PhotosFetched state and be able to load next page',
-          () async {
+      () async {
         when(usecase.getPhotos('batman', 1)).thenAnswer(
-              (_) => Stream.fromIterable(
+          (_) => Stream.fromIterable(
             [
               Loading(),
               Success(
@@ -94,21 +94,20 @@ main() {
 
     test(
       'should move to Idling again',
-          () async {
+      () async {
         when(usecase.getPhotos('batman', 1)).thenAnswer(
-              (_) =>
-              Stream.fromIterable(
-                [
-                  Loading(),
-                  Success(
-                    PageOfPhotos(
-                      1,
-                      2,
-                      [Photo(1, 'id', 'owner', 'secret', 'server', 'title')],
-                    ),
-                  ),
-                ],
+          (_) => Stream.fromIterable(
+            [
+              Loading(),
+              Success(
+                PageOfPhotos(
+                  1,
+                  2,
+                  [Photo(1, 'id', 'owner', 'secret', 'server', 'title')],
+                ),
               ),
+            ],
+          ),
         );
         photoBloc.onKeywordChanged('batman');
 
@@ -132,9 +131,9 @@ main() {
 
     test(
       'should move to NotFound state and not be able to load next page',
-          () async {
+      () async {
         when(usecase.getPhotos('batman', 1)).thenAnswer(
-              (_) => Stream.fromIterable(
+          (_) => Stream.fromIterable(
             [
               Loading(),
               Success(
@@ -164,9 +163,9 @@ main() {
 
     test(
       'should not be able to load next page if last page is reached',
-          () async {
+      () async {
         when(usecase.getPhotos('batman', 1)).thenAnswer(
-              (_) => Stream.fromIterable(
+          (_) => Stream.fromIterable(
             [
               Loading(),
               Success(
@@ -201,9 +200,9 @@ main() {
 
     test(
       'should move to SearchFailed state and not be able to load next page',
-          () async {
+      () async {
         when(usecase.getPhotos('batman', 1)).thenAnswer(
-              (_) => Stream.fromIterable(
+          (_) => Stream.fromIterable(
             [
               Loading(),
               Failure(Exception()),
@@ -230,15 +229,14 @@ main() {
 
     test(
       'should retry query without any problem',
-          () async {
+      () async {
         when(usecase.getPhotos('batman', 1)).thenAnswer(
-              (_) =>
-              Stream.fromIterable(
-                [
-                  Loading(),
-                  Failure(Exception()),
-                ],
-              ),
+          (_) => Stream.fromIterable(
+            [
+              Loading(),
+              Failure(Exception()),
+            ],
+          ),
         );
         photoBloc.onKeywordChanged('batman');
 
@@ -253,19 +251,18 @@ main() {
         ));
 
         when(usecase.getPhotos('batman', 1)).thenAnswer(
-              (_) =>
-              Stream.fromIterable(
-                [
-                  Loading(),
-                  Success(
-                    PageOfPhotos(
-                      1,
-                      1, //only has 1 page and it is reached
-                      [Photo(1, 'id', 'owner', 'secret', 'server', 'title')],
-                    ),
-                  ),
-                ],
+          (_) => Stream.fromIterable(
+            [
+              Loading(),
+              Success(
+                PageOfPhotos(
+                  1,
+                  1, //only has 1 page and it is reached
+                  [Photo(1, 'id', 'owner', 'secret', 'server', 'title')],
+                ),
               ),
+            ],
+          ),
         );
         photoBloc.onRetryQuery('batman');
 
@@ -283,9 +280,9 @@ main() {
 
     test(
       'should move to PhotosFetched state after loading new page and be able to load next page',
-          () async {
+      () async {
         when(usecase.getPhotos('batman', 1)).thenAnswer(
-              (_) => Stream.fromIterable(
+          (_) => Stream.fromIterable(
             [
               Loading(),
               Success(
@@ -299,7 +296,7 @@ main() {
           ),
         );
         when(usecase.getPhotos('batman', 2)).thenAnswer(
-              (_) => Stream.fromIterable([
+          (_) => Stream.fromIterable([
             Loading(),
             Success(
               PageOfPhotos(
@@ -365,9 +362,9 @@ main() {
 
     test(
       'should move to LoadPageFailed state and be able to retry',
-          () async {
+      () async {
         when(usecase.getPhotos('batman', 1)).thenAnswer(
-              (_) => Stream.fromIterable(
+          (_) => Stream.fromIterable(
             [
               Loading(),
               Success(
@@ -381,7 +378,7 @@ main() {
           ),
         );
         when(usecase.getPhotos('batman', 2)).thenAnswer(
-              (_) => Stream.fromIterable([
+          (_) => Stream.fromIterable([
             Loading(),
             Failure(Exception()),
           ]),
@@ -428,7 +425,7 @@ main() {
         await broadcastState.expect(
           emits(
             LoadingNextPage(
-              [Photo(1, 'id', 'owner', 'secret', 'server', 'title'),],
+              [Photo(1, 'id', 'owner', 'secret', 'server', 'title')],
             ),
           ),
         );

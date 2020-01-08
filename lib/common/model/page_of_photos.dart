@@ -11,15 +11,12 @@ class PageOfPhotos {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-          other is PageOfPhotos &&
-              runtimeType == other.runtimeType &&
-              page == other.page &&
-              totalPages == other.totalPages &&
-              listEquals(photos, other.photos);
+      other is PageOfPhotos &&
+          runtimeType == other.runtimeType &&
+          page == other.page &&
+          totalPages == other.totalPages &&
+          listEquals(photos, other.photos);
 
   @override
-  int get hashCode =>
-      page.hashCode ^
-      totalPages.hashCode ^
-      photos.hashCode;
+  int get hashCode => page.hashCode ^ totalPages.hashCode ^ photos.hashCode;
 }

@@ -3,7 +3,6 @@ import 'package:flickr_viewer/data/sources/photo_data_sources.dart';
 import 'package:flickr_viewer/domain/repositories/photo_repository.dart';
 
 class PhotoRepositoryImpl implements PhotoRepository {
-
   final PhotoRemoteDataSource _photoRemoteDataSource;
 
   PhotoRepositoryImpl(this._photoRemoteDataSource);
