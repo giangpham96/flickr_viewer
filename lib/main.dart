@@ -1,34 +1,37 @@
+import 'package:flickr_viewer/data/data_module.dart';
+import 'package:flickr_viewer/domain/domain_module.dart';
+import 'package:flickr_viewer/presentation/presentation_module.dart';
+import 'package:flickr_viewer/remote/remote_module.dart';
+import 'package:flickr_viewer/ui/search/search_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 
-void main() => runApp(MyApp());
-
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
-    );
-  }
+void main() {
+  remoteModule();
+  dataModule();
+  domainModule();
+  presentationModule();
+  runApp(App());
 }
 
-class MyHomePage extends StatelessWidget {
-  MyHomePage({Key key, this.title}) : super(key: key);
-
-  final String title;
+class App extends StatefulWidget {
 
   @override
+  State<StatefulWidget> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(title),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    return StreamBuilder(
+      stream: GetIt.instance.ready,
+      builder: (_, __) => MaterialApp(
+        title: 'Flutter Demo',
+        theme: ThemeData(
+          primarySwatch: Colors.blue,
+        ),
+        home: SearchScreen(),
+      ),
     );
   }
 }
