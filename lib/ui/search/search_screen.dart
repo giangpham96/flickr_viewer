@@ -13,6 +13,7 @@ class SearchScreen extends BaseScreen {
 
 class _SearchScreenState extends BaseScreenState<SearchScreen, PhotoBloc> {
 
+  final _searchController =  TextEditingController();
   @override
   Widget provideChild() {
     return Scaffold(
@@ -26,6 +27,7 @@ class _SearchScreenState extends BaseScreenState<SearchScreen, PhotoBloc> {
             bloc.onKeywordChanged(s.trim());
           }
         },
+        searchController: _searchController,
       ),
       body: SearchResult(),
     );

@@ -4,13 +4,14 @@ import 'package:rxdart/rxdart.dart';
 import '../../../common/stream_extensions.dart';
 
 class SearchView extends StatefulWidget implements PreferredSizeWidget {
-  SearchView(
-      {Key key,
-      this.onQueryChanged,
-      this.bottom,
-      this.foregroundColor = Colors.white,
-      this.hint})
-      : preferredSize = Size.fromHeight(
+  SearchView({
+    Key key,
+    this.onQueryChanged,
+    this.bottom,
+    this.foregroundColor = Colors.white,
+    this.hint,
+    this.searchController,
+  })  : preferredSize = Size.fromHeight(
             kToolbarHeight + (bottom?.preferredSize?.height ?? 0.0)),
         super(key: key);
 
@@ -25,6 +26,8 @@ class SearchView extends StatefulWidget implements PreferredSizeWidget {
 
   final String hint;
 
+  final TextEditingController searchController;
+
   @override
   _SearchViewState createState() {
     return _SearchViewState();
@@ -32,20 +35,28 @@ class SearchView extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _SearchViewState extends State<SearchView> {
-  final TextEditingController _searchQuery = new TextEditingController();
-  bool _showClearButton = false;
+  TextEditingController _controller;
+
+  TextEditingController get _searchController =>
+      widget.searchController ?? _controller;
+
   PublishSubject<String> _queryEmitter = PublishSubject();
 
   @override
   void initState() {
     super.initState();
+    if (widget.searchController == null) {
+      _controller = TextEditingController();
+    }
+    _searchController.addListener(_onTextChanged);
     _queryEmitter
         .debounceTime(Duration(milliseconds: 500))
-        .listen((q) => widget.onQueryChanged(q));
+        .listen((q) => widget.onQueryChanged?.call(q));
   }
 
   @override
   void dispose() {
+    _searchController.removeListener(_onTextChanged);
     _queryEmitter.close();
     super.dispose();
   }
@@ -56,40 +67,36 @@ class _SearchViewState extends State<SearchView> {
       centerTitle: true,
       bottom: widget.bottom,
       title: TextField(
-        controller: _searchQuery,
+        controller: _searchController,
         style: TextStyle(
           color: widget.foregroundColor,
         ),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.only(top: 14),
           prefixIcon: const Icon(Icons.search, color: Colors.white),
-          suffixIcon: _showClearButton
+          suffixIcon: _searchController.text.isNotEmpty
               ? IconButton(
                   icon: Icon(Icons.close, color: widget.foregroundColor),
-                  onPressed: () => setState(() {
-                    _showClearButton = false;
+                  onPressed: () {
                     // This Future is a work around for a known bug of flutter
                     // Refer to https://github.com/flutter/flutter/issues/35848
                     Future.delayed(Duration(milliseconds: 10)).then((_) {
-                      _searchQuery.clear();
+                      _searchController.clear();
                     });
-                    _queryEmitter.addIfNotClosed('');
-                  }),
+                  },
                 )
               : null,
           hintText: widget.hint ?? '',
           hintStyle: TextStyle(color: widget.foregroundColor),
         ),
-        onChanged: (s) {
-          setState(() {
-            _showClearButton = s.isNotEmpty;
-          });
-          var query = s.trim();
-          if (query.isNotEmpty && widget.onQueryChanged != null) {
-            _queryEmitter.addIfNotClosed(query);
-          }
-        },
       ),
     );
+  }
+
+  _onTextChanged() {
+    final s = _searchController.text;
+    var query = s.trim();
+    _queryEmitter.addIfNotClosed(query);
+    setState(() {});
   }
 }
