@@ -6,10 +6,18 @@ abstract class BaseBlocAwareWidget extends StatefulWidget {}
 
 abstract class BaseBlocAwareState<S extends BaseBlocAwareWidget,
     B extends BaseBloc, VS> extends State<S> {
+
+  Stream<VS> _stream;
+  @override
+  void initState() {
+    _stream = getStream(bloc);
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
-      stream: getStream(bloc),
+      stream: _stream,
       builder: (context, snapshot) {
         if (snapshot.data != null)
          return render(context, snapshot.data);
