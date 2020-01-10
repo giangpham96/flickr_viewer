@@ -2,7 +2,7 @@ import 'package:flickr_viewer/common/model/photo.dart';
 import 'package:flickr_viewer/presentation/photo_bloc.dart';
 import 'package:flickr_viewer/presentation/photo_view_state.dart';
 import 'package:flickr_viewer/ui/base/base_stateful_widget.dart';
-import 'package:flickr_viewer/ui/search/widgets/paginated_grid_view.dart';
+import 'package:flickr_viewer/ui/custom_widgets/paginated_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:transparent_image/transparent_image.dart';

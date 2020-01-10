@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import '../../../common/context_extensions.dart';
+import '../../common/context_extensions.dart';
 
 class FooterState {
   const FooterState._();
