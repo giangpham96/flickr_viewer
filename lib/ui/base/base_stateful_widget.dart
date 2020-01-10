@@ -10,7 +10,11 @@ abstract class BaseBlocAwareState<S extends BaseBlocAwareWidget,
   Widget build(BuildContext context) {
     return StreamBuilder(
       stream: getStream(bloc),
-      builder: (context, snapshot) => render(context, snapshot.data),
+      builder: (context, snapshot) {
+        if (snapshot.data != null)
+         return render(context, snapshot.data);
+        return const SizedBox.shrink();
+      },
     );
   }
 
