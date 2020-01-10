@@ -46,6 +46,7 @@ class PhotoBloc extends BaseBloc {
     _photoController.addIfNotClosed(Idling());
     _keywordChangeNotifier
         .distinct()
+        .doOnData((_) => _currentStoredPhotos = null)
         .switchMap((k) => _cancelLoadingNextPageIfNecessary().map((_) => k))
         .flatMap(_searchPhotos)
         .listen(_mapResultWithKeywordToSearchState);
@@ -58,7 +59,6 @@ class PhotoBloc extends BaseBloc {
   }
 
   onKeywordChanged(String keyword) {
-    _currentStoredPhotos = null;
     _keywordChangeNotifier.addIfNotClosed(keyword);
   }
 
@@ -116,11 +116,7 @@ class PhotoBloc extends BaseBloc {
           result.pageOfPhotos.totalPages,
         );
         _photoController.addIfNotClosed(
-          PhotosFetched(
-            keyword,
-            result.pageOfPhotos.photos,
-            true
-          ),
+          PhotosFetched(keyword, result.pageOfPhotos.photos, true),
         );
       }
     } else {
@@ -150,11 +146,8 @@ class PhotoBloc extends BaseBloc {
       );
       _ableToLoadNextPage = true;
       _photoController.addIfNotClosed(
-        PhotosFetched(
-          _currentStoredPhotos.keyword,
-          _currentStoredPhotos.loadedPhotos,
-          false
-        ),
+        PhotosFetched(_currentStoredPhotos.keyword,
+            _currentStoredPhotos.loadedPhotos, false),
       );
     } else {
       throw Exception('unsupported result');
