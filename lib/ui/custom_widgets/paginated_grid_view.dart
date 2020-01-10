@@ -43,18 +43,17 @@ class _PaginatedGridViewState extends State<PaginatedGridView> {
     final widgetState = widget.footerState;
 
     return NotificationListener<ScrollNotification>(
-        onNotification: (ScrollNotification sn) {
-          if (widgetState != null)
-            return true;
-          if (sn is ScrollUpdateNotification &&
-              sn.metrics.pixels >
-                  sn.metrics.maxScrollExtent -
-                      context.getScreenHeight() / 2) {
-            widget.onNextPage();
-          }
-          return true;
-        },
-        child: _renderList(widgetState));
+      onNotification: (ScrollNotification sn) {
+        if (widgetState != null) return true;
+        if (sn is ScrollUpdateNotification &&
+            sn.metrics.pixels >
+                sn.metrics.maxScrollExtent - context.getScreenHeight() / 2) {
+          widget.onNextPage();
+        }
+        return true;
+      },
+      child: _renderList(widgetState),
+    );
   }
 
   Widget _renderList(FooterState footerState) {
