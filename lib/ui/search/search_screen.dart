@@ -6,8 +6,22 @@ import 'package:flutter/widgets.dart';
 
 import '../base/base_screen.dart';
 
-class SearchScreen extends BaseStatelessScreen<PhotoBloc> {
-  final _searchController =  TextEditingController();
+class SearchScreen extends BaseStatefulScreen {
+
+  @override
+  State<StatefulWidget> createState() {
+    return _SearchScreenState();
+  }
+}
+
+class _SearchScreenState
+    extends BaseStatefulScreenState<SearchScreen, PhotoBloc> {
+  final _searchController = TextEditingController();
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
   @override
   Widget provideChild() {
     return Scaffold(
@@ -23,7 +37,11 @@ class SearchScreen extends BaseStatelessScreen<PhotoBloc> {
         },
         searchController: _searchController,
       ),
-      body: SearchResult(),
+      body: SearchResult(
+        onKeywordChange: (s) {
+          _searchController.text = s;
+        },
+      ),
     );
   }
 }

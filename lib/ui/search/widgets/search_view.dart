@@ -56,7 +56,7 @@ class _SearchViewState extends State<SearchView> {
 
   @override
   void dispose() {
-    _searchController.removeListener(_onTextChanged);
+    _controller?.dispose();
     _queryEmitter.close();
     super.dispose();
   }
