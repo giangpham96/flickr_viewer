@@ -42,22 +42,18 @@ main() {
       ),
     ];
     when(dataSource.getPredefinedKeywords())
-        .thenAnswer((_) => Stream.value(testData));
+        .thenAnswer((_) => Future.value(testData));
 
-    await repository.getKeywords().expect(
-          emits(testData),
-        );
+    await repository.getKeywords().expectValue(testData);
 
     verify(dataSource.getPredefinedKeywords());
   });
 
   test('should propagate error from cache layer', () async {
     when(dataSource.getPredefinedKeywords())
-        .thenAnswer((_) => Stream.error(Exception()));
+        .thenAnswer((_) => Future.error(Exception()));
 
-    await repository.getKeywords().expect(
-          emitsError(isA<Exception>()),
-        );
+    await repository.getKeywords().expectError(isA<Exception>());
 
     verify(dataSource.getPredefinedKeywords());
   });

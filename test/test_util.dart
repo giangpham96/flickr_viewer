@@ -5,3 +5,18 @@ extension TestStream<T> on Stream<T> {
     return expectLater(this, matcher);
   }
 }
+
+extension TestFuture<T> on Future<T> {
+  Future<void> expectValue(dynamic matcher) async {
+    expect(await this, matcher);
+  }
+
+  Future<void> expectError(dynamic matcher) async {
+    try {
+      await this;
+      fail("exception not thrown");
+    } catch (e) {
+      expect(e, matcher);
+    }
+  }
+}

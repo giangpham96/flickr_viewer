@@ -68,20 +68,18 @@ main() {
         ''';
       _mockWebServer.enqueue(httpCode: 200, body: result, headers: _headers);
 
-      await _datasource.getPhotos('batman', 1).expect(
-            emits(
-              PageOfPhotos(
-                1,
-                1,
-                [
-                  Photo(66, "48961354943", "183117384@N08", "4128d45088",
-                      "65535", "Highland Cattle"),
-                  Photo(66, "48961354338", "45582668@N03", "39815c1990",
-                      "65535", "Animal sculptures, 01.07.2019."),
-                ],
-              ),
-            ),
-          );
+      await _datasource.getPhotos('batman', 1).expectValue(
+        PageOfPhotos(
+          1,
+          1,
+          [
+            Photo(66, "48961354943", "183117384@N08", "4128d45088", "65535",
+                "Highland Cattle"),
+            Photo(66, "48961354338", "45582668@N03", "39815c1990", "65535",
+                "Animal sculptures, 01.07.2019."),
+          ],
+        ),
+      );
 
       final req = _mockWebServer.takeRequest();
 
@@ -131,7 +129,7 @@ main() {
 
       await _datasource
           .getPhotos('batman', 1)
-          .expect(emitsError(isA<MissingRequiredKeysException>()));
+          .expectError(isA<MissingRequiredKeysException>());
 
       final req = _mockWebServer.takeRequest();
 
@@ -155,7 +153,7 @@ main() {
 
       await _datasource
           .getPhotos('batman', 1)
-          .expect(emitsError(isA<FlickrErrorResponseRemoteModel>()));
+          .expectError(isA<FlickrErrorResponseRemoteModel>());
 
       final req = _mockWebServer.takeRequest();
 

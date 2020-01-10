@@ -31,6 +31,7 @@ class GetKeywordUseCaseImpl implements GetKeywordUseCase {
   Stream<GetKeywordResult> getKeywords() {
     return _keywordRepository
         .getKeywords()
+        .asStream()
         .map<GetKeywordResult>((k) => KeywordsLoaded(k))
         .onErrorResume((e) => Stream.value(FailureLoadingKeywords(e)))
         .startWith(LoadingKeywords());

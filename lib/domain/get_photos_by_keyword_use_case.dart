@@ -29,8 +29,7 @@ class GetPhotosByKeywordUseCaseImpl implements GetPhotosByKeywordUseCase {
 
   @override
   Stream<GetPhotosByKeywordResult> getPhotos(String keyword, int page) {
-    return _photoRepository
-        .getPhotos(keyword, page)
+    return Stream.fromFuture(_photoRepository.getPhotos(keyword, page))
         .map<GetPhotosByKeywordResult>((p) => PhotosLoaded(p))
         .onErrorResume((e) => Stream.value(FailureLoadingPhotos(e)))
         .startWith(LoadingPhotos());

@@ -3,8 +3,8 @@ import 'package:flickr_viewer/data/sources/keyword_data_sources.dart';
 
 class KeywordCacheDataSourceImpl implements KeywordCacheDataSource {
   @override
-  Stream<List<Keyword>> getPredefinedKeywords() {
-    return Stream.value(
+  Future<List<Keyword>> getPredefinedKeywords() {
+    return Future.value(
       const [
         Keyword(
           'Animals',

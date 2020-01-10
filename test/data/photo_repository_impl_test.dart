@@ -25,22 +25,18 @@ main() {
       ],
     );
     when(dataSource.getPhotos('batman', 1))
-        .thenAnswer((_) => Stream.value(testData));
+        .thenAnswer((_) => Future.value(testData));
 
-    await repository.getPhotos('batman', 1).expect(
-          emits(testData),
-        );
+    await repository.getPhotos('batman', 1).expectValue(testData);
 
     verify(dataSource.getPhotos('batman', 1));
   });
 
   test('should propagate error from remote layer', () async {
     when(dataSource.getPhotos('batman', 1))
-        .thenAnswer((_) => Stream.error(Exception()));
+        .thenAnswer((_) => Future.error(Exception()));
 
-    await repository.getPhotos('batman', 1).expect(
-          emitsError(isA<Exception>()),
-        );
+    await repository.getPhotos('batman', 1).expectError(isA<Exception>());
 
     verify(dataSource.getPhotos('batman', 1));
   });

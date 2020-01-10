@@ -9,7 +9,7 @@ class KeywordRepositoryImpl implements KeywordRepository {
   const KeywordRepositoryImpl(this._keywordCacheDataSource);
 
   @override
-  Stream<List<Keyword>> getKeywords() {
+  Future<List<Keyword>> getKeywords() {
     return _keywordCacheDataSource.getPredefinedKeywords();
   }
 }

@@ -13,7 +13,8 @@ main() {
   final getPhotosByKeywordUseCase = GetKeywordUseCaseImpl(repository);
 
   test('should start with Loading', () async {
-    when(repository.getKeywords()).thenAnswer((_) => NeverStream());
+    when(repository.getKeywords())
+        .thenAnswer((_) => NeverStream<List<Keyword>>().first);
     await getPhotosByKeywordUseCase
         .getKeywords()
         .expect(emits(isA<LoadingKeywords>()));
@@ -49,7 +50,7 @@ main() {
       ),
     ];
     when(repository.getKeywords())
-        .thenAnswer((_) => Stream.value(testData));
+        .thenAnswer((_) => Future.value(testData));
     await getPhotosByKeywordUseCase.getKeywords().expect(
           emitsInOrder([
             isA<LoadingKeywords>(),
@@ -61,7 +62,7 @@ main() {
 
   test('should start with Loading and move to Failure', () async {
     when(repository.getKeywords())
-        .thenAnswer((_) => Stream.error(Exception()));
+        .thenAnswer((_) => Future.error(Exception()));
     await getPhotosByKeywordUseCase.getKeywords().expect(
           emitsInOrder([
             isA<LoadingKeywords>(),

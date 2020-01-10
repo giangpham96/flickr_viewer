@@ -1,5 +1,5 @@
 import 'package:dio/dio.dart';
-import 'package:rxdart/rxdart.dart';
+import 'dart:async';
 import 'package:flickr_viewer/common/model/page_of_photos.dart';
 import 'package:flickr_viewer/common/model/photo.dart';
 import 'package:flickr_viewer/data/sources/photo_data_sources.dart';
@@ -13,25 +13,22 @@ class PhotoRemoteDataSourceImpl implements PhotoRemoteDataSource {
   PhotoRemoteDataSourceImpl(this._flickrService);
 
   @override
-  Stream<PageOfPhotos> getPhotos(String keyword, int page) {
-    return Stream.fromFuture(_flickrService.getPhotos(keyword, page))
-        .map(
-          (r) => PageOfPhotos(
-            r.photos.page,
-            r.photos.pages,
-            r.photos.photo
-                .map(
-                  (p) =>
-                      Photo(p.farm, p.id, p.owner, p.secret, p.server, p.title),
-                )
-                .toList(),
-          ),
-        )
-        .onErrorResume(
-          (dynamic e) => Stream.error(
-              e is DioError && e.error is FlickrErrorResponseRemoteModel
-                  ? e.error
-                  : e),
-        );
+  Future<PageOfPhotos> getPhotos(String keyword, int page) {
+    return _flickrService.getPhotos(keyword, page).then(
+      (r) => PageOfPhotos(
+        r.photos.page,
+        r.photos.pages,
+        r.photos.photo
+            .map(
+              (p) => Photo(p.farm, p.id, p.owner, p.secret, p.server, p.title),
+            )
+            .toList(),
+      ),
+      onError: (e) {
+        throw e is DioError && e.error is FlickrErrorResponseRemoteModel
+            ? e.error
+            : e;
+      },
+    );
   }
 }

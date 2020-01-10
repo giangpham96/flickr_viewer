@@ -8,7 +8,7 @@ class PhotoRepositoryImpl implements PhotoRepository {
   PhotoRepositoryImpl(this._photoRemoteDataSource);
 
   @override
-  Stream<PageOfPhotos> getPhotos(String keyword, int page) {
+  Future<PageOfPhotos> getPhotos(String keyword, int page) {
     return _photoRemoteDataSource.getPhotos(keyword, page);
   }
 }
