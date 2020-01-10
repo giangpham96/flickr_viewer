@@ -4,9 +4,9 @@ import 'package:get_it/get_it.dart';
 
 import 'base_bloc_provider.dart';
 
-abstract class BaseScreen extends StatefulWidget {}
+abstract class BaseStatefulScreen extends StatefulWidget {}
 
-abstract class BaseScreenState<S extends BaseScreen, B extends BaseBloc>
+abstract class BaseStatefulScreenState<S extends BaseStatefulScreen, B extends BaseBloc>
     extends State<S> {
   final B _bloc = GetIt.instance.get<B>();
   B get bloc => _bloc;

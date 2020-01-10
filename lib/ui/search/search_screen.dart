@@ -6,12 +6,12 @@ import 'package:flutter/widgets.dart';
 
 import '../base/base_screen.dart';
 
-class SearchScreen extends BaseScreen {
+class SearchScreen extends BaseStatefulScreen {
   @override
   State<StatefulWidget> createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends BaseScreenState<SearchScreen, PhotoBloc> {
+class _SearchScreenState extends BaseStatefulScreenState<SearchScreen, PhotoBloc> {
 
   final _searchController =  TextEditingController();
   @override
