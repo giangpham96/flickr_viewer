@@ -48,6 +48,19 @@ The Cache layer handles all communication with the local database.
 ## Test
 `flutter test`
 
+## Build
+- Retrieve a flickr api key by following [this instruction](https://www.flickr.com/services/api/misc.api_keys.html)
+- In the root of the repository, create an assets directory if it is missing
+- Inside assets, create a file called `secret.json` with the following content
+```
+{"flickr_api_key": "<YOUR_FLICKR_API_KEY>"}
+```
+- Connect a device or an emulator
+- Build
+```
+flutter run
+```
+
 ## CI
 Github Actions will run tests and build debug application (iOS, Android) on every pull request and merge event.
 Test coverage is reported at [CodeCov](https://codecov.io/gh/giangpham96/flickr_viewer)
