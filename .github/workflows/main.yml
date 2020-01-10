@@ -1,0 +1,42 @@
+name: Test and build
+on: [push,pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: 'stable'
+      - run: mkdir assets && touch assets/secret.json
+      - run: echo "${{ secrets.APP_SECRET }}" >> assets/secret.json
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test --coverage
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: coverage/lcov.info
+  build-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: 'stable'
+      - run: mkdir assets && touch assets/secret.json
+      - run: echo "${{ secrets.APP_SECRET }}" >> assets/secret.json
+      - run: flutter pub get
+      - run: flutter build apk --debug
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: subosito/flutter-action@v1
+        with:
+          channel: 'stable'
+      - run: mkdir assets && touch assets/secret.json
+      - run: echo "${{ secrets.APP_SECRET }}" >> assets/secret.json
+      - run: flutter pub get
+      - run: flutter build ios --debug --no-codesign
