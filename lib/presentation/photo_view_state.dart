@@ -1,17 +1,23 @@
+import 'package:flickr_viewer/common/model/keyword.dart';
 import 'package:flickr_viewer/common/model/photo.dart';
 import 'package:flutter/foundation.dart';
 
 abstract class PhotoViewState {}
 
 class Idling extends PhotoViewState {
+  final List<Keyword> keywords;
+
+  Idling({this.keywords = const <Keyword>[]});
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
           other is Idling &&
-              runtimeType == other.runtimeType;
+              runtimeType == other.runtimeType &&
+              listEquals(keywords, other.keywords);
 
   @override
-  int get hashCode => 0;
+  int get hashCode => keywords.hashCode;
 }
 
 class Searching extends PhotoViewState {

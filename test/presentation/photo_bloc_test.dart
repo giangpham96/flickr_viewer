@@ -1,29 +1,107 @@
+import 'package:fake_async/fake_async.dart';
+import 'package:flickr_viewer/common/model/keyword.dart';
 import 'package:flickr_viewer/common/model/page_of_photos.dart';
 import 'package:flickr_viewer/common/model/photo.dart';
+import 'package:flickr_viewer/domain/get_keywords_use_case.dart';
 import 'package:flickr_viewer/domain/get_photos_by_keyword_use_case.dart';
 import 'package:flickr_viewer/presentation/photo_bloc.dart';
 import 'package:flickr_viewer/presentation/photo_view_state.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
+import 'package:rxdart/rxdart.dart';
 import '../test_util.dart';
 
 class MockedGetPhotosByResultUseCase extends Mock
     implements GetPhotosByKeywordUseCase {}
 
+class MockedGetKeywordUseCase extends Mock implements GetKeywordUseCase {}
+
 main() {
   GetPhotosByKeywordUseCase usecase;
+  GetKeywordUseCase getKeywordUseCase;
   PhotoBloc photoBloc;
 
-  setUp(() {
-    usecase = MockedGetPhotosByResultUseCase();
-    photoBloc = PhotoBloc(usecase);
-  });
+  group('about keywords rendering functionality', () {
+    tearDown(() {
+      photoBloc.dispose();
+    });
 
-  tearDown(() {
-    photoBloc.dispose();
+    test(
+      'should move to Idle state with keywords if state hasnt changed',
+      () {
+        fakeAsync((async) {
+          usecase = MockedGetPhotosByResultUseCase();
+          getKeywordUseCase = MockedGetKeywordUseCase();
+          when(getKeywordUseCase.getKeywords()).thenAnswer(
+            (_) => Stream.fromIterable(
+              [
+                LoadingKeywords(),
+                KeywordsLoaded([Keyword('test')]),
+              ],
+            ).delay(Duration(milliseconds: 200)),
+          );
+          photoBloc = PhotoBloc(usecase, getKeywordUseCase);
+          var events = <PhotoViewState>[];
+          photoBloc.photoState.listen(events.add);
+          async.elapse(Duration(milliseconds: 400));
+          expect(
+            events,
+            [
+              Idling(),
+              Idling(keywords: [Keyword('test')]),
+            ],
+          );
+        });
+      },
+    );
+
+    test(
+      'should not move to Idle state with keywords if state has changed',
+      () {
+        fakeAsync((async) {
+          usecase = MockedGetPhotosByResultUseCase();
+          getKeywordUseCase = MockedGetKeywordUseCase();
+          when(getKeywordUseCase.getKeywords()).thenAnswer(
+            (_) => Stream.fromIterable(
+              [
+                LoadingKeywords(),
+                KeywordsLoaded([Keyword('test')]),
+              ],
+            ).delay(Duration(milliseconds: 200)),
+          );
+
+          when(usecase.getPhotos('batman', 1))
+              .thenAnswer((_) => Stream.value(LoadingPhotos()));
+          photoBloc = PhotoBloc(usecase, getKeywordUseCase);
+          photoBloc.onKeywordChanged('batman');
+          var events = <PhotoViewState>[];
+          photoBloc.photoState.listen(events.add);
+          async.elapse(Duration(milliseconds: 400));
+          expect(
+            events,
+            [
+              Idling(),
+              Searching(),
+            ],
+          );
+        });
+      },
+    );
   });
 
   group('about loading photos functionality', () {
+    setUp(() {
+      usecase = MockedGetPhotosByResultUseCase();
+      getKeywordUseCase = MockedGetKeywordUseCase();
+      when(getKeywordUseCase.getKeywords())
+          .thenAnswer((_) => Stream.value(LoadingKeywords()));
+      photoBloc = PhotoBloc(usecase, getKeywordUseCase);
+    });
+
+    tearDown(() {
+      photoBloc.dispose();
+    });
+
     test(
       'should start with Idling state and disallow loading next page',
       () async {
@@ -39,7 +117,8 @@ main() {
         when(usecase.getPhotos('batman', 1))
             .thenAnswer((_) => Stream.value(LoadingPhotos()));
         photoBloc.onKeywordChanged('batman');
-        await photoBloc.photoState.expect(emitsInOrder([Idling(), Searching()]));
+        await photoBloc.photoState
+            .expect(emitsInOrder([Idling(), Searching()]));
         photoBloc.loadNextPage();
         verify(usecase.getPhotos('batman', 1));
         verifyNever(usecase.getPhotos('batman', 2));
@@ -73,11 +152,8 @@ main() {
           [
             Idling(),
             Searching(),
-            PhotosFetched(
-              'batman',
-              [Photo(1, 'id', 'owner', 'secret', 'server', 'title')],
-              true
-            ),
+            PhotosFetched('batman',
+                [Photo(1, 'id', 'owner', 'secret', 'server', 'title')], true),
           ],
         ));
 

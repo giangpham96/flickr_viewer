@@ -3,6 +3,6 @@ import 'package:get_it/get_it.dart';
 
 presentationModule() {
   GetIt.instance.registerFactory<PhotoBloc>(
-    () => PhotoBloc(GetIt.instance.get()),
+    () => PhotoBloc(GetIt.instance.get(), GetIt.instance.get()),
   );
 }

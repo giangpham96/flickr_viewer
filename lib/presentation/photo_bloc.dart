@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:flickr_viewer/common/model/keyword.dart';
 import 'package:flickr_viewer/common/model/photo.dart';
+import 'package:flickr_viewer/domain/get_keywords_use_case.dart';
 import 'package:flickr_viewer/domain/get_photos_by_keyword_use_case.dart';
 import 'package:flickr_viewer/presentation/base/bloc.dart';
 import 'package:flickr_viewer/presentation/photo_view_state.dart';
@@ -28,9 +30,21 @@ class _CurrentStoredSearch {
 }
 
 class PhotoBloc extends BaseBloc {
-  Stream<PhotoViewState> get photoState => _photoController.stream;
+  Stream<PhotoViewState> get photoState =>
+      Rx.combineLatest2<PhotoViewState, List<Keyword>, PhotoViewState>(
+        _photoController.stream,
+        _keywordController.stream,
+        (photoViewState, keywords) {
+          if (photoViewState is Idling) {
+            return Idling(keywords: keywords);
+          } else {
+            return photoViewState;
+          }
+        },
+      ).distinct();
 
   final _photoController = StreamController<PhotoViewState>();
+  final _keywordController = StreamController<List<Keyword>>();
 
   final _keywordChangeNotifier = PublishSubject<String>();
 
@@ -41,9 +55,16 @@ class PhotoBloc extends BaseBloc {
   bool _ableToLoadNextPage = false;
 
   final GetPhotosByKeywordUseCase _getPhotosByKeywordUseCase;
+  final GetKeywordUseCase _getKeywordUseCase;
 
-  PhotoBloc(this._getPhotosByKeywordUseCase) {
+  PhotoBloc(this._getPhotosByKeywordUseCase, this._getKeywordUseCase) {
+    _getKeywordUseCase.getKeywords().listen((r) {
+      if (r is KeywordsLoaded) {
+        _keywordController.addIfNotClosed(r.keywords);
+      }
+    });
     _photoController.addIfNotClosed(Idling());
+    _keywordController.addIfNotClosed([]);
     _keywordChangeNotifier
         .distinct()
         .doOnData((_) => _currentStoredPhotos = null)
@@ -160,6 +181,7 @@ class PhotoBloc extends BaseBloc {
       (_) {
         _keywordChangeNotifier.close();
         _photoController.close();
+        _keywordController.close();
       },
     );
   }
