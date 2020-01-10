@@ -1,11 +1,10 @@
-import 'package:flickr_viewer/common/model/photo.dart';
 import 'package:flickr_viewer/presentation/photo_bloc.dart';
 import 'package:flickr_viewer/presentation/photo_view_state.dart';
 import 'package:flickr_viewer/ui/base/base_stateful_widget.dart';
 import 'package:flickr_viewer/ui/custom_widgets/paginated_grid_view.dart';
+import 'package:flickr_viewer/ui/search/widgets/photo_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:transparent_image/transparent_image.dart';
 
 class SearchResult extends BaseBlocAwareWidget {
   @override
@@ -30,7 +29,10 @@ class _SearchResultState
     if (viewState is PhotosFetched) {
       if (viewState.hideKeyboard)
         FocusScope.of(context).requestFocus(FocusNode());
-      return _renderPhotoList(viewState.photos);
+      return PhotoList(
+        photos: viewState.photos,
+        loadNextPage: bloc.loadNextPage,
+      );
     }
     if (viewState is SearchFailed) {
       FocusScope.of(context).requestFocus(FocusNode());
@@ -43,14 +45,16 @@ class _SearchResultState
       );
     }
     if (viewState is LoadingNextPage) {
-      return _renderPhotoList(
-        viewState.photos,
+      return PhotoList(
+        photos: viewState.photos,
         footerState: FooterState.loadingFooter(),
+        loadNextPage: bloc.loadNextPage,
       );
     }
     if (viewState is LoadPageFailed) {
-      return _renderPhotoList(
-        viewState.photos,
+      return PhotoList(
+        photos: viewState.photos,
+        loadNextPage: bloc.loadNextPage,
         footerState: LoadingFailedFooter(
           (context) => Theme(
             data: ThemeData(splashColor: Colors.transparent),
@@ -80,67 +84,6 @@ class _SearchResultState
     }
     return Center(
       child: CircularProgressIndicator(),
-    );
-  }
-}
-
-extension RenderPhotoList on _SearchResultState {
-  Widget _renderPhotoList(
-    List<Photo> photos, {
-    FooterState footerState,
-  }) {
-    return PaginatedGridView(
-      itemBuilder: (_, index) => _mapPhotoToItemView(photos[index]),
-      itemCount: photos.length,
-      onNextPage: bloc.loadNextPage,
-      childAspectRatio: 0.75,
-      footerState: footerState,
-    );
-  }
-
-  Widget _mapPhotoToItemView(Photo photo) {
-    return Stack(
-      alignment: AlignmentDirectional.bottomCenter,
-      children: <Widget>[
-        Positioned.fill(
-          child: FadeInImage.memoryNetwork(
-            fadeInCurve: Curves.easeIn,
-            image: photo.thumbnail,
-            placeholder: kTransparentImage,
-            fit: BoxFit.cover,
-          ),
-        ),
-        Container(
-          width: double.infinity,
-          // Add box decoration
-          decoration: const BoxDecoration(
-            // Box decoration takes a gradient
-            gradient: const LinearGradient(
-              // Where the linear gradient begins and ends
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              // Add one stop for each color. Stops should increase from 0 to 1
-              stops: const [0.1, 0.25, 0.5, 1.0],
-              colors: const [
-                // Colors are easy thanks to Flutter's Colors class.
-                Colors.transparent,
-                Colors.black12,
-                Colors.black54,
-                Colors.black,
-              ],
-            ),
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(8),
-            child: Text(
-              photo.title,
-              style: const TextStyle(color: Colors.white),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ),
-      ],
     );
   }
 }
