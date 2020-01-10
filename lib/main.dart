@@ -1,3 +1,4 @@
+import 'package:flickr_viewer/cache/cache_module.dart';
 import 'package:flickr_viewer/common/config/secret_provider.dart';
 import 'package:flickr_viewer/data/data_module.dart';
 import 'package:flickr_viewer/domain/domain_module.dart';
@@ -11,6 +12,7 @@ import 'package:get_it/get_it.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   appModule(await SecretLoader('assets/secret.json').load());
+  cacheModule();
   remoteModule();
   dataModule();
   domainModule();

@@ -2,11 +2,16 @@ import 'package:flickr_viewer/presentation/photo_bloc.dart';
 import 'package:flickr_viewer/presentation/photo_view_state.dart';
 import 'package:flickr_viewer/ui/base/base_stateful_widget.dart';
 import 'package:flickr_viewer/ui/custom_widgets/paginated_grid_view.dart';
+import 'package:flickr_viewer/ui/search/widgets/keyword_list.dart';
 import 'package:flickr_viewer/ui/search/widgets/photo_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class SearchResult extends BaseBlocAwareWidget {
+  final Function(String) onKeywordChange;
+
+  SearchResult({this.onKeywordChange});
+
   @override
   State<StatefulWidget> createState() {
     return _SearchResultState();
@@ -24,7 +29,10 @@ class _SearchResultState
   Widget render(BuildContext context, PhotoViewState viewState) {
     _hideSnackBar();
     if (viewState is Idling) {
-      return Container();
+      return KeywordList(
+        keywords: viewState.keywords,
+        onKeywordSelected: widget.onKeywordChange ?? (_) {},
+      );
     }
     if (viewState is PhotosFetched) {
       if (viewState.hideKeyboard)
