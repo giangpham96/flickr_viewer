@@ -21,3 +21,19 @@ abstract class BaseStatefulScreenState<S extends BaseStatefulScreen, B extends B
     );
   }
 }
+
+abstract class BaseStatelessScreen<B extends BaseBloc> extends StatelessWidget {
+
+  final B _bloc = GetIt.instance.get<B>();
+  B get bloc => _bloc;
+
+  Widget provideChild();
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<B>(
+      child: provideChild(),
+      bloc: _bloc,
+    );
+  }
+}
