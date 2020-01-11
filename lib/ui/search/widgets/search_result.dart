@@ -28,6 +28,13 @@ class _SearchResultState
   @override
   Widget render(BuildContext context, PhotoViewState viewState) {
     _hideSnackBar();
+    return AnimatedSwitcher(
+      duration: Duration(milliseconds: 250),
+      child: _getContent(context, viewState),
+    );
+  }
+
+  Widget _getContent(BuildContext context, PhotoViewState viewState) {
     if (viewState is Idling) {
       return KeywordList(
         keywords: viewState.keywords,
@@ -64,7 +71,7 @@ class _SearchResultState
         photos: viewState.photos,
         loadNextPage: bloc.loadNextPage,
         footerState: LoadingFailedFooter(
-          (context) => Theme(
+              (context) => Theme(
             data: ThemeData(splashColor: Colors.transparent),
             child: Container(
               padding: EdgeInsets.all(15),
